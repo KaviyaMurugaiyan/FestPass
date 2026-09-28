@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Events | FestPass</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f5f8f6;
+            color: #17231b;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 250px;
+            height: 100vh;
+
+            background: #15803d;
+
+            padding: 28px 18px;
+
+            display: flex;
+            flex-direction: column;
+
+            z-index: 1000;
+        }
+
+        .logo {
+            padding: 0 14px 38px;
+
+            color: white;
+
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: #dcfce7;
+        }
+
+        .menu-title {
+            padding: 0 14px;
+
+            margin-bottom: 12px;
+
+            color: #bbf7d0;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.5px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+
+            gap: 5px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+
+            padding: 13px 14px;
+
+            border-radius: 10px;
+
+            color: #dcfce7;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+        .menu a:hover {
+            background: rgba(255,255,255,0.14);
+
+            color: white;
+        }
+
+        .menu a.active {
+            background: white;
+
+            color: #15803d;
+
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            width: 27px;
+
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+
+            padding: 13px 14px;
+
+            border-radius: 10px;
+
+            color: #dcfce7;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+        .logout:hover {
+            background: white;
+
+            color: #15803d;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 250px;
+
+            min-height: 100vh;
+
+            padding: 35px 45px;
+        }
+
+
+        /* ================= HEADER ================= */
+
+        .page-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-end;
+
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            font-size: 29px;
+
+            margin-bottom: 7px;
+        }
+
+        .page-title p {
+            color: #728078;
+
+            font-size: 14px;
+        }
+
+        .event-count {
+            color: #6d7972;
+
+            font-size: 13px;
+        }
+
+        .event-count strong {
+            color: #15803d;
+        }
+
+
+        /* ================= EVENT GRID ================= */
+
+        .events-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 22px;
+        }
+
+
+        /* ================= EVENT CARD ================= */
+
+        .event-card {
+
+            background: white;
+
+            border: 1px solid #dfe9e2;
+
+            border-radius: 16px;
+
+            overflow: hidden;
+
+            transition: 0.25s;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+        .event-card:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                    0 12px 30px
+                    rgba(21,128,61,0.10);
+        }
+
+
+        /* ================= IMAGE ================= */
+
+        .event-image {
+
+            height: 185px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            background: #eaf7ee;
+        }
+
+        .event-image img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            display: block;
+
+            transition: 0.4s;
+        }
+
+        .event-card:hover .event-image img {
+
+            transform: scale(1.04);
+        }
+
+
+        /* ================= BADGE ================= */
+
+        .category {
+
+            position: absolute;
+
+            top: 14px;
+            left: 14px;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            background: white;
+
+            color: #15803d;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            box-shadow:
+                    0 3px 10px
+                    rgba(0,0,0,0.12);
+        }
+
+
+        /* ================= CARD CONTENT ================= */
+
+        .event-content {
+
+            padding: 20px;
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+        .event-content h2 {
+
+            font-size: 18px;
+
+            margin-bottom: 8px;
+
+            color: #17231b;
+        }
+
+        .description {
+
+            color: #78847d;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+            min-height: 37px;
+
+            margin-bottom: 17px;
+        }
+
+
+        /* ================= DETAILS ================= */
+
+        .details {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 9px;
+
+            margin-bottom: 18px;
+        }
+
+        .detail {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            color: #56635b;
+
+            font-size: 12px;
+        }
+
+        .detail-icon {
+
+            width: 24px;
+
+            color: #15803d;
+
+            font-size: 14px;
+
+            text-align: center;
+        }
+
+
+        /* ================= CHIEF GUEST ================= */
+
+        .guest {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 12px;
+
+            background: #f5faf6;
+
+            border-radius: 10px;
+
+            margin-bottom: 18px;
+        }
+
+        .guest-image {
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            background: #dcefe2;
+
+        }
+
+        .guest-info {
+
+            min-width: 0;
+        }
+
+        .guest-label {
+
+            font-size: 9px;
+
+            color: #8a968f;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.7px;
+
+            margin-bottom: 3px;
+        }
+
+        .guest-name {
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            color: #26352b;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+        .guest-role {
+
+            font-size: 10px;
+
+            color: #7e8b83;
+
+            margin-top: 2px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        /* ================= BOOKING INFO ================= */
+
+        .booking-info {
+
+            margin-top: auto;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #edf2ee;
+        }
+
+        .booking-top {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 8px;
+        }
+
+        .price {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            color: #17231b;
+        }
+
+        .price small {
+
+            font-size: 10px;
+
+            color: #89948d;
+
+            font-weight: normal;
+        }
+
+        .seats {
+
+            font-size: 11px;
+
+            color: #15803d;
+
+            font-weight: 600;
+        }
+
+
+        /* ================= PROGRESS ================= */
+
+        .progress {
+
+            width: 100%;
+
+            height: 5px;
+
+            background: #e7eee9;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+
+            height: 100%;
+
+            background: #15803d;
+
+            border-radius: 10px;
+
+            transition: width 0.4s;
+        }
+
+
+        /* ================= BUTTONS ================= */
+
+        .buttons {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 9px;
+        }
+
+        .btn {
+
+            padding: 11px 8px;
+
+            border-radius: 8px;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .btn-details {
+
+            background: white;
+
+            color: #15803d;
+
+            border: 1px solid #b9d9c3;
+        }
+
+        .btn-details:hover {
+
+            background: #f1faf4;
+        }
+
+        .btn-book {
+
+            background: #15803d;
+
+            color: white;
+
+            border: 1px solid #15803d;
+        }
+
+        .btn-book:hover {
+
+            background: #116b32;
+        }
+
+        .btn-disabled {
+
+            background: #e8eeea;
+
+            color: #89948d;
+
+            border: none;
+
+            cursor: not-allowed;
+        }
+
+
+        /* ================= LOADING ================= */
+
+        .loading {
+
+            grid-column: 1 / -1;
+
+            text-align: center;
+
+            padding: 80px 20px;
+
+            color: #829087;
+
+            font-size: 14px;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1200px) {
+
+            .events-grid {
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                position: relative;
+
+                width: 100%;
+
+                height: auto;
+            }
+
+            .main {
+
+                margin-left: 0;
+
+                padding: 25px 18px;
+            }
+
+            .events-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+
+                align-items: flex-start;
+
+                gap: 10px;
+
+                flex-direction: column;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        🎟 <span>Fest</span>Pass
+    </div>
+
+
+    <div class="menu-title">
+        Main Menu
+    </div>
+
+
+    <nav class="menu">
+
+        <a href="/dashboard">
+
+            <span class="menu-icon">⌂</span>
+
+            Dashboard
+
+        </a>
+
+
+        <a href="/events" class="active">
+
+            <span class="menu-icon">◈</span>
+
+            Events
+
+        </a>
+
+
+        <a href="/timings">
+
+            <span class="menu-icon">◷</span>
+
+            Event Timings
+
+        </a>
+
+
+        <a href="/bookings">
+
+            <span class="menu-icon">▤</span>
+
+            My Bookings
+
+        </a>
+
+
+        <a href="/tickets">
+
+            <span class="menu-icon">▣</span>
+
+            My Tickets
+
+        </a>
+
+
+        <a href="/scanner">
+
+            <span class="menu-icon">⌗</span>
+
+            QR Check-in
+
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <a href="/login" class="logout">
+
+            <span class="menu-icon">↪</span>
+
+            Logout
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h1>Explore Events</h1>
+
+            <p>
+                Discover upcoming college events and reserve your seat.
+            </p>
+
+        </div>
+
+
+        <div class="event-count">
+
+            <strong id="eventCount">0</strong>
+            events available
+
+        </div>
+
+    </div>
+
+
+
+    <!-- EVENT CARDS -->
+
+    <div
+            class="events-grid"
+            id="eventsContainer"
+    >
+
+        <div class="loading">
+            Loading events...
+        </div>
+
+    </div>
+
+
+</main>
+
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+
+    async function loadEvents() {
+
+        try {
+
+            const response =
+                await fetch("/api/events");
+
+
+            if (!response.ok) {
+
+                throw new Error("Unable to load events");
+
+            }
+
+
+            const events =
+                await response.json();
+
+
+            const container =
+                document.getElementById(
+                    "eventsContainer"
+                );
+
+
+            document.getElementById(
+                "eventCount"
+            ).innerText = events.length;
+
+
+            container.innerHTML = "";
+
+
+            if (events.length === 0) {
+
+                container.innerHTML = `
+
+                <div class="loading">
+
+                    No events available right now.
+
+                </div>
+
+            `;
+
+                return;
+
+            }
+
+
+            events.forEach(event => {
+
+
+                const capacity =
+                    Number(event.capacity || 0);
+
+
+                const booked =
+                    Number(event.ticketsIssued || 0);
+
+
+                const available =
+                    Math.max(
+                        0,
+                        capacity - booked
+                    );
+
+
+                let percentage = 0;
+
+
+                if (capacity > 0) {
+
+                    percentage =
+                        Math.min(
+                            100,
+                            (booked / capacity) * 100
+                        );
+
+                }
+
+
+                /* DATE */
+
+                let dateText =
+                    "Date to be announced";
+
+
+                if (event.eventDate) {
+
+                    const date =
+                        new Date(event.eventDate);
+
+
+                    dateText =
+                        date.toLocaleDateString(
+                            "en-IN",
+                            {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric"
+                            }
+                        );
+
+                }
+
+
+                /* TIME */
+
+                let timeText =
+                    "Time to be announced";
+
+
+                if (
+                    event.startTime &&
+                    event.endTime
+                ) {
+
+                    timeText =
+                        event.startTime.substring(0,5)
+                        +
+                        " - "
+                        +
+                        event.endTime.substring(0,5);
+
+                }
+
+
+                /* IMAGE */
+
+                const image =
+                    event.imageUrl
+                    ||
+                    "https://images.unsplash.com/photo-1518770660439-4636190af475";
+
+
+                /* CHIEF GUEST */
+
+                const guestImage =
+                    event.chiefGuestImage
+                    ||
+                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330";
+
+
+                const card =
+                    document.createElement("article");
+
+
+                card.className =
+                    "event-card";
+
+
+                card.innerHTML = `
+
+                <div class="event-image">
+
+                    <img
+                        src="${image}"
+                        alt="${event.name || "Event"}"
+                    >
+
+                    <div class="category">
+
+                        ${event.category || "College Event"}
+
+                    </div>
+
+                </div>
+
+
+                <div class="event-content">
+
+
+                    <h2>
+                        ${event.name || "Untitled Event"}
+                    </h2>
+
+
+                    <div class="description">
+
+                        ${event.description
+                || "Join us for an exciting college fest experience."}
+
+                    </div>
+
+
+                    <div class="details">
+
+
+                        <div class="detail">
+
+                            <span class="detail-icon">
+                                ◷
+                            </span>
+
+                            ${dateText}
+                            ·
+                            ${timeText}
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span class="detail-icon">
+                                ◉
+                            </span>
+
+                            ${event.venue
+                || "Venue to be announced"}
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="guest">
+
+
+                        <img
+                            class="guest-image"
+                            src="${guestImage}"
+                            alt="Chief Guest"
+                        >
+
+
+                        <div class="guest-info">
+
+                            <div class="guest-label">
+                                Chief Guest
+                            </div>
+
+                            <div class="guest-name">
+                                ${event.chiefGuestName
+                || "To be announced"}
+                            </div>
+
+                            <div class="guest-role">
+                                ${event.chiefGuestRole
+                || "Guest details coming soon"}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="booking-info">
+
+
+                        <div class="booking-top">
+
+
+                            <div class="price">
+
+                                ₹${Number(
+                    event.ticketPrice || 0
+                ).toFixed(0)}
+
+                                <small>
+                                    / ticket
+                                </small>
+
+                            </div>
+
+
+                            <div class="seats">
+
+                                ${available}
+                                seats left
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                style="width:${percentage}%"
+                            ></div>
+
+                        </div>
+
+
+                        <div class="buttons">
+
+
+                            <a
+                                class="btn btn-details"
+                                href="/event-details?id=${event.id}"
+                            >
+                                View Details
+                            </a>
+
+
+                            ${
+                    available > 0
+
+                        ?
+
+                        `
+                                <a
+                                    class="btn btn-book"
+                                    href="/book?eventId=${event.id}"
+                                >
+                                    Book Now
+                                </a>
+                                `
+
+                        :
+
+                        `
+                                <span
+                                    class="btn btn-disabled"
+                                >
+                                    Sold Out
+                                </span>
+                                `
+                }
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+            `;
+
+
+                container.appendChild(card);
+
+            });
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            document.getElementById(
+                "eventsContainer"
+            ).innerHTML = `
+
+            <div class="loading">
+
+                Unable to load events.
+                Please make sure the server is running.
+
+            </div>
+
+        `;
+
+        }
+
+    }
+
+
+    /* FIRST LOAD */
+
+    loadEvents();
+
+
+    /* LIVE UPDATE */
+
+    setInterval(
+        loadEvents,
+        5000
+    );
+
+
+</script>
+
+
+</body>
+
+</html>

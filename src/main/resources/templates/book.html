@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Ticket - FestPass</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #1f2937;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #0f8f4f;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            padding: 13px 15px;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-links a.active {
+            background: white;
+            color: #0f8f4f;
+            font-weight: bold;
+        }
+
+        .logout {
+            margin-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.25);
+            padding-top: 20px;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            padding: 35px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            color: #123d29;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+        }
+
+        /* BOOKING CONTAINER */
+        .booking-container {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 25px;
+            max-width: 1100px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        /* EVENT */
+        .event-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category {
+            display: inline-block;
+            background: #e7f7ed;
+            color: #0f8f4f;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .event-info h2 {
+            font-size: 25px;
+            color: #123d29;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .event-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .detail-box {
+            background: #f7faf8;
+            padding: 13px;
+            border-radius: 8px;
+        }
+
+        .detail-box span {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .detail-box strong {
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        /* FORM */
+        .card h3 {
+            color: #123d29;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #0f8f4f;
+        }
+
+        .form-group input[readonly] {
+            background: #f3f6f4;
+            color: #4b5563;
+            cursor: not-allowed;
+        }
+
+        /* PAYMENT */
+        .payment-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 10px;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .payment-option {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .payment-option:hover {
+            border-color: #0f8f4f;
+        }
+
+        .payment-option.selected {
+            border: 2px solid #0f8f4f;
+            background: #eaf8ef;
+            color: #0f8f4f;
+            font-weight: bold;
+        }
+
+        /* SUMMARY */
+        .summary {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 18px;
+            margin-top: 5px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #123d29;
+        }
+
+        .book-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #0f8f4f;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .book-btn:hover {
+            background: #0b713e;
+        }
+
+        .book-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .booking-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 190px;
+            }
+
+            .main {
+                margin-left: 190px;
+                padding: 20px;
+            }
+
+            .event-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="logo">
+        FestPass
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/events">
+            Events
+        </a>
+
+        <a href="/timings">
+            Event Timings
+        </a>
+
+        <a href="/bookings">
+            My Bookings
+        </a>
+
+        <a href="/tickets">
+            My Tickets
+        </a>
+
+        <a href="/scanner">
+            QR Check-in
+        </a>
+
+        <div class="logout">
+            <a href="/login" onclick="logout()">
+                Logout
+            </a>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="page-header">
+        <h1>Book Your Ticket</h1>
+        <p>Complete your booking for the selected fest event.</p>
+    </div>
+
+
+    <div class="booking-container">
+
+        <!-- EVENT INFORMATION -->
+        <div class="card">
+
+            <img
+                    id="eventImage"
+                    class="event-image"
+                    src=""
+                    alt="Event Image"
+            >
+
+            <div class="event-info">
+
+                <span
+                        id="eventCategory"
+                        class="category">
+                    Loading...
+                </span>
+
+                <h2 id="eventName">
+                    Loading event...
+                </h2>
+
+                <p
+                        id="eventDescription"
+                        class="description">
+                    Please wait while event information is loaded.
+                </p>
+
+                <div class="event-details">
+
+                    <div class="detail-box">
+                        <span>Date</span>
+                        <strong id="eventDate">-</strong>
+                    </div>
+
+                    <div class="detail-box">
+                        <span>Time</span>
+                        <strong id="eventTime">-</strong>
+                    </div>
+
+                    <div class="detail-box">
+                        <span>Venue</span>
+                        <strong id="eventVenue">-</strong>
+                    </div>
+
+                    <div class="detail-box">
+                        <span>Available Seats</span>
+                        <strong id="availableSeats">-</strong>
+                    </div>
+
+                    <div class="detail-box">
+                        <span>Chief Guest</span>
+                        <strong id="chiefGuest">-</strong>
+                    </div>
+
+                    <div class="detail-box">
+                        <span>Ticket Price</span>
+                        <strong id="eventPrice">₹0</strong>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- BOOKING FORM -->
+        <div class="card">
+
+            <h3>Booking Details</h3>
+
+            <form id="bookingForm">
+
+                <!-- NAME -->
+                <div class="form-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <input
+                            type="text"
+                            id="name"
+                            placeholder="Enter your full name"
+                            required
+                    >
+
+                </div>
+
+
+                <!-- EMAIL -->
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                            type="email"
+                            id="email"
+                            placeholder="Logged-in email"
+                            readonly
+                    >
+
+                </div>
+
+
+                <!-- PAYMENT -->
+                <div class="payment-title">
+                    Payment Method
+                </div>
+
+                <div class="payment-options">
+
+                    <div
+                            class="payment-option selected"
+                            data-payment="Cash"
+                            onclick="selectPayment(this)">
+                        Cash
+                    </div>
+
+                    <div
+                            class="payment-option"
+                            data-payment="QR"
+                            onclick="selectPayment(this)">
+                        QR Payment
+                    </div>
+
+                </div>
+
+
+                <!-- SUMMARY -->
+                <div class="summary">
+
+                    <div class="summary-row">
+
+                        <span>Event</span>
+
+                        <strong id="summaryEvent">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Ticket Price</span>
+
+                        <strong id="summaryPrice">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Quantity</span>
+
+                        <strong>
+                            1
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row total">
+
+                        <span>Total</span>
+
+                        <strong id="summaryTotal">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                        type="submit"
+                        class="book-btn"
+                        id="bookButton">
+                    Confirm Booking
+                </button>
+
+
+                <div
+                        id="message"
+                        class="message">
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let selectedEvent = null;
+    let selectedPayment = "Cash";
+
+
+    /*
+     * CHECK LOGIN
+     *
+     * User must login before accessing booking page.
+     */
+    const loggedInEmail = localStorage.getItem("loggedInEmail");
+
+    if (!loggedInEmail) {
+
+        window.location.href = "/login";
+
+    } else {
+
+        document.getElementById("email").value = loggedInEmail;
+
+    }
+
+
+    /*
+     * GET EVENT ID FROM URL
+     *
+     * Example:
+     * /book?eventId=1
+     */
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const eventId = urlParams.get("eventId");
+
+
+    /*
+     * LOAD EVENT
+     */
+    async function loadEvent() {
+
+        if (!eventId) {
+
+            showError("No event selected.");
+
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(`/api/events/${eventId}`);
+
+            if (!response.ok) {
+                throw new Error("Event not found");
+            }
+
+            selectedEvent = await response.json();
+
+
+            /*
+             * EVENT INFORMATION
+             */
+
+            document.getElementById("eventName").textContent =
+                selectedEvent.name || "Event";
+
+            document.getElementById("eventCategory").textContent =
+                selectedEvent.category || "College Fest";
+
+            document.getElementById("eventDescription").textContent =
+                selectedEvent.description || "No description available.";
+
+
+            /*
+             * IMAGE
+             */
+
+            document.getElementById("eventImage").src =
+                selectedEvent.imageUrl ||
+                "https://via.placeholder.com/800x400?text=FestPass+Event";
+
+
+            /*
+             * DATE
+             */
+
+            document.getElementById("eventDate").textContent =
+                selectedEvent.eventDate || "-";
+
+
+            /*
+             * TIME
+             */
+
+            let timeText = "-";
+
+            if (selectedEvent.startTime && selectedEvent.endTime) {
+
+                timeText =
+                    selectedEvent.startTime +
+                    " - " +
+                    selectedEvent.endTime;
+
+            } else if (selectedEvent.startTime) {
+
+                timeText =
+                    selectedEvent.startTime;
+
+            }
+
+            document.getElementById("eventTime").textContent =
+                timeText;
+
+
+            /*
+             * VENUE
+             */
+
+            document.getElementById("eventVenue").textContent =
+                selectedEvent.venue || "-";
+
+
+            /*
+             * CHIEF GUEST
+             */
+
+            document.getElementById("chiefGuest").textContent =
+                selectedEvent.chiefGuestName || "-";
+
+
+            /*
+             * AVAILABLE SEATS
+             */
+
+            const capacity =
+                selectedEvent.capacity || 0;
+
+            const ticketsIssued =
+                selectedEvent.ticketsIssued || 0;
+
+            const available =
+                Math.max(0, capacity - ticketsIssued);
+
+            document.getElementById("availableSeats").textContent =
+                available;
+
+
+            /*
+             * PRICE
+             */
+
+            const price =
+                selectedEvent.ticketPrice || 0;
+
+            document.getElementById("eventPrice").textContent =
+                "₹" + price;
+
+            document.getElementById("summaryPrice").textContent =
+                "₹" + price;
+
+            document.getElementById("summaryTotal").textContent =
+                "₹" + price;
+
+
+            /*
+             * SUMMARY EVENT
+             */
+
+            document.getElementById("summaryEvent").textContent =
+                selectedEvent.name || "-";
+
+
+            /*
+             * DISABLE BOOKING IF FULL
+             */
+
+            if (available <= 0) {
+
+                const button =
+                    document.getElementById("bookButton");
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Event Full";
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError("Unable to load event details.");
+
+        }
+
+    }
+
+
+    /*
+     * PAYMENT SELECTION
+     */
+    function selectPayment(element) {
+
+        document
+            .querySelectorAll(".payment-option")
+            .forEach(option => {
+
+                option.classList.remove("selected");
+
+            });
+
+
+        element.classList.add("selected");
+
+
+        selectedPayment =
+            element.dataset.payment;
+
+    }
+
+
+    /*
+     * BOOK TICKET
+     */
+    document
+        .getElementById("bookingForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+
+            /*
+             * CHECK LOGIN AGAIN
+             */
+
+            const email =
+                localStorage.getItem("loggedInEmail");
+
+            if (!email) {
+
+                window.location.href = "/login";
+
+                return;
+            }
+
+
+            /*
+             * GET NAME
+             */
+
+            const name =
+                document
+                    .getElementById("name")
+                    .value
+                    .trim();
+
+
+            if (!name) {
+
+                showError("Please enter your full name.");
+
+                return;
+            }
+
+
+            if (!selectedEvent || !eventId) {
+
+                showError("Event information is missing.");
+
+                return;
+            }
+
+
+            /*
+             * DISABLE BUTTON
+             */
+
+            const button =
+                document.getElementById("bookButton");
+
+            button.disabled = true;
+
+            button.textContent =
+                "Booking...";
+
+
+            try {
+
+                const url =
+                    `/api/tickets/buy` +
+                    `?eventId=${encodeURIComponent(eventId)}` +
+                    `&name=${encodeURIComponent(name)}` +
+                    `&email=${encodeURIComponent(email)}`;
+
+
+                const response =
+                    await fetch(url, {
+                        method: "POST"
+                    });
+
+
+                if (!response.ok) {
+
+                    const errorText =
+                        await response.text();
+
+                    throw new Error(
+                        errorText || "Booking failed"
+                    );
+
+                }
+
+
+                const ticket =
+                    await response.json();
+
+
+                /*
+                 * SUCCESS
+                 *
+                 * Redirect to My Ticket page.
+                 */
+
+                window.location.href =
+                    `/tickets?ticketId=${ticket.id}`;
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                showError(
+                    error.message ||
+                    "Unable to book ticket."
+                );
+
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Confirm Booking";
+
+            }
+
+        });
+
+
+    /*
+     * SHOW ERROR
+     */
+    function showError(message) {
+
+        const messageBox =
+            document.getElementById("message");
+
+        messageBox.textContent =
+            message;
+
+        messageBox.className =
+            "message error";
+
+    }
+
+
+    /*
+     * LOGOUT
+     */
+    function logout() {
+
+        localStorage.removeItem("loggedInEmail");
+
+    }
+
+
+    /*
+     * START
+     */
+    loadEvent();
+
+</script>
+
+</body>
+</html>

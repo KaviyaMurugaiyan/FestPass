@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QR Check-in - FestPass</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #1f2937;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #16803c;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #d9f99d;
+        }
+
+        .nav a {
+            display: block;
+            text-decoration: none;
+            color: white;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border-radius: 9px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 18px;
+            right: 18px;
+        }
+
+        .logout a {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            color: #14532d;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        /* SCANNER CARD */
+        .scanner-card {
+            max-width: 700px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .camera-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #dcfce7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .scanner-card h2 {
+            color: #14532d;
+            margin-bottom: 8px;
+        }
+
+        .scanner-card > p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        /* QR READER */
+        #reader {
+            width: 100%;
+            max-width: 450px;
+            margin: 20px auto;
+            border: 2px solid #dcfce7;
+            border-radius: 14px;
+            overflow: hidden;
+            background: white;
+        }
+
+        #reader video {
+            border-radius: 10px;
+        }
+
+        #reader button {
+            background: #16803c !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 7px !important;
+            padding: 9px 15px !important;
+            cursor: pointer;
+        }
+
+        #reader select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+
+        /* RESULT */
+        #result {
+            margin: 20px auto 0;
+            padding: 14px;
+            border-radius: 9px;
+            font-weight: bold;
+            max-width: 450px;
+            min-height: 20px;
+            color: #374151;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534 !important;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b !important;
+        }
+
+        .ready {
+            background: #f0fdf4;
+            color: #166534 !important;
+        }
+
+        /* INFO */
+        .info {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f0fdf4;
+            border-radius: 10px;
+            color: #166534;
+            font-size: 14px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                margin-left: 210px;
+                padding: 20px;
+            }
+
+            .scanner-card {
+                padding: 20px;
+            }
+        }
+    </style>
+
+    <!-- QR Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="logo">
+        Fest<span>Pass</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/events">
+            Events
+        </a>
+
+        <a href="/timings">
+            Event Timings
+        </a>
+
+        <a href="/bookings">
+            My Bookings
+        </a>
+
+        <a href="/tickets">
+            My Tickets
+        </a>
+
+        <a href="/scanner" class="active">
+            QR Check-in
+        </a>
+
+    </div>
+
+    <div class="logout">
+        <a href="/login" onclick="logout()">
+            Logout
+        </a>
+    </div>
+
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="header">
+        <h1>QR Check-in</h1>
+        <p>Scan an attendee's FestPass QR code to verify their ticket.</p>
+    </div>
+
+
+    <div class="scanner-card">
+
+        <div class="camera-icon">
+            📷
+        </div>
+
+        <h2>Scan Ticket QR Code</h2>
+
+        <p>
+            Point the camera at the QR code displayed on the attendee's ticket.
+        </p>
+
+
+        <!-- QR SCANNER -->
+        <div id="reader"></div>
+
+
+        <!-- RESULT -->
+        <div id="result" class="ready">
+            Ready to scan
+        </div>
+
+
+        <div class="info">
+            ✓ Valid ticket → Check-in successful<br>
+            ✓ Used ticket → Ticket already used<br>
+            ✓ Invalid QR → Invalid QR code
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Check login
+    const loggedInEmail =
+        localStorage.getItem("loggedInEmail");
+
+    if (!loggedInEmail) {
+        window.location.href = "/login";
+    }
+
+
+    let scanning = true;
+
+
+    async function checkIn(qrCode) {
+
+        if (!scanning) {
+            return;
+        }
+
+        scanning = false;
+
+        const result =
+            document.getElementById("result");
+
+
+        result.innerText =
+            "Checking ticket...";
+
+        result.className = "";
+
+
+        try {
+
+            const response = await fetch(
+                "/api/tickets/check-in?qrCode="
+                + encodeURIComponent(qrCode),
+                {
+                    method: "POST"
+                }
+            );
+
+
+            const message =
+                await response.text();
+
+
+            result.innerText = message;
+
+
+            if (message === "Check-in successful") {
+
+                result.className = "success";
+
+            } else {
+
+                result.className = "error";
+
+            }
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            result.innerText =
+                "Unable to check ticket.";
+
+            result.className = "error";
+        }
+
+
+        // Allow next scan after 3 seconds
+        setTimeout(function () {
+
+            scanning = true;
+
+            result.innerText =
+                "Ready to scan";
+
+            result.className = "ready";
+
+        }, 3000);
+
+    }
+
+
+    function onScanSuccess(decodedText) {
+
+        checkIn(decodedText);
+
+    }
+
+
+    function onScanFailure(error) {
+        // Ignore continuous scanning errors
+    }
+
+
+    const scanner =
+        new Html5QrcodeScanner(
+            "reader",
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            false
+        );
+
+
+    scanner.render(
+        onScanSuccess,
+        onScanFailure
+    );
+
+
+    // Logout
+    function logout() {
+
+        localStorage.removeItem(
+            "loggedInEmail"
+        );
+
+    }
+
+</script>
+
+</body>
+</html>
