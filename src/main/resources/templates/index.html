@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FestPass | College Fest</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #312e81, #581c87);
+            min-height: 100vh;
+            color: white;
+        }
+
+        nav {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8%;
+            background: rgba(15, 23, 42, 0.85);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 15px;
+        }
+
+        nav a:hover {
+            color: #c4b5fd;
+        }
+
+        .hero {
+            min-height: calc(100vh - 75px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .hero-content {
+            max-width: 750px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(196, 181, 253, 0.4);
+            padding: 9px 18px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            color: #ddd6fe;
+            font-size: 14px;
+        }
+
+        h1 {
+            font-size: 65px;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        h1 span {
+            color: #c4b5fd;
+        }
+
+        .hero p {
+            font-size: 19px;
+            line-height: 1.7;
+            color: #ddd;
+            margin-bottom: 35px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 15px 28px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .primary {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .primary:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        .secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+
+        .secondary:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 55px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            width: 200px;
+            padding: 20px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature h3 {
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 45px;
+            }
+
+            nav {
+                padding: 0 5%;
+            }
+
+            nav a {
+                margin-left: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">Fest<span>Pass</span></div>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+    </div>
+</nav>
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="tag">
+            🎟️ SMART COLLEGE FEST TICKETING
+        </div>
+
+        <h1>
+            Your Pass.<br>
+            Your <span>Experience.</span>
+        </h1>
+
+        <p>
+            Discover college events, book your digital ticket,
+            and enjoy fast QR-based entry with FestPass.
+        </p>
+
+        <div class="buttons">
+
+            <button class="primary"
+                    onclick="location.href='/login'">
+                Get Started
+            </button>
+
+            <button class="secondary"
+                    onclick="location.href='/api/events'">
+                View Events
+            </button>
+
+        </div>
+
+        <div class="features">
+
+            <div class="feature">
+                <h3>🎟️ Easy Booking</h3>
+                <p>Book your fest ticket quickly.</p>
+            </div>
+
+            <div class="feature">
+                <h3>🔐 Secure QR</h3>
+                <p>Unique QR for every ticket.</p>
+            </div>
+
+            <div class="feature">
+                <h3>⚡ Fast Entry</h3>
+                <p>Quick QR check-in at the event.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>
