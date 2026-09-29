@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    ```
+    <title>Event Details - FestPass</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f7f5;
+            color: #1f2937;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 245px;
+            height: 100vh;
+            background: #0b6b3a;
+            color: white;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            margin-bottom: 45px;
+            padding-left: 15px;
+        }
+
+        .logo span {
+            color: #b8f5d0;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .sidebar-bottom a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px 16px;
+            border-radius: 10px;
+        }
+
+        .sidebar-bottom a:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 245px;
+            min-height: 100vh;
+            padding: 35px 45px 50px;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #0b6b3a;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= HERO ================= */
+
+        .hero {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 330px;
+            object-fit: cover;
+            display: block;
+            background: #dfe9e3;
+        }
+
+        .hero-content {
+            padding: 28px 32px;
+        }
+
+        .category {
+            display: inline-block;
+            background: #e2f6ea;
+            color: #0b6b3a;
+            padding: 7px 13px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .hero-content h1 {
+            font-size: 34px;
+            color: #17251d;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #66736b;
+            line-height: 1.6;
+            max-width: 850px;
+        }
+
+        /* ================= GRID ================= */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #17251d;
+        }
+
+        /* ================= EVENT INFO ================= */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .info-item {
+            background: #f6faf7;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #7a867f;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #26352c;
+        }
+
+        /* ================= CHIEF GUEST ================= */
+
+        .guest {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .guest-image {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e6eee9;
+        }
+
+        .guest-name {
+            font-size: 17px;
+            font-weight: bold;
+            color: #1f2d25;
+            margin-bottom: 5px;
+        }
+
+        .guest-role {
+            font-size: 14px;
+            color: #758078;
+        }
+
+        /* ================= BOOKING CARD ================= */
+
+        .booking-card {
+            position: sticky;
+            top: 30px;
+        }
+
+        .price-label {
+            color: #77827b;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .price {
+            color: #0b6b3a;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .seat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .seat-count {
+            color: #0b6b3a;
+            font-weight: bold;
+        }
+
+        .progress {
+            width: 100%;
+            height: 9px;
+            background: #e7ece9;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #0b6b3a;
+            width: 0%;
+            border-radius: 10px;
+        }
+
+        .capacity-info {
+            font-size: 13px;
+            color: #758078;
+            margin-bottom: 22px;
+        }
+
+        .book-button {
+            width: 100%;
+            border: none;
+            background: #0b6b3a;
+            color: white;
+            padding: 15px;
+            border-radius: 11px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .book-button:hover {
+            background: #09572f;
+        }
+
+        .book-button:disabled {
+            background: #9aa59e;
+            cursor: not-allowed;
+        }
+
+        /* ================= ERROR ================= */
+
+        .error {
+            background: #fff1f1;
+            color: #b42318;
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+                padding: 25px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .logo {
+                margin-bottom: 20px;
+            }
+
+            .nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .hero-image {
+                height: 220px;
+            }
+
+            .hero-content h1 {
+                font-size: 27px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    ```
+    <div class="logo">
+        Fest<span>Pass</span>
+    </div>
+
+    <nav class="nav">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/events" class="active">
+            Events
+        </a>
+
+        <a href="/timings">
+            Event Timings
+        </a>
+
+        <a href="/bookings">
+            My Bookings
+        </a>
+
+        <a href="/tickets">
+            My Tickets
+        </a>
+
+        <a href="/scanner">
+            QR Check-in
+        </a>
+
+    </nav>
+
+    <div class="sidebar-bottom">
+        <a href="/login">
+            Logout
+        </a>
+    </div>
+    ```
+
+</aside>
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+    ```
+    <a href="/events" class="back-link">
+        ← Back to Events
+    </a>
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <img
+                id="eventImage"
+                class="hero-image"
+                src=""
+                alt="Event Image"
+        >
+
+        <div class="hero-content">
+
+            <div id="eventCategory" class="category">
+                Loading...
+            </div>
+
+            <h1 id="eventName">
+                Loading event...
+            </h1>
+
+            <p id="eventDescription" class="description">
+                Loading event description...
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONTENT -->
+
+    <div class="content-grid">
+
+        <!-- LEFT SIDE -->
+
+        <div>
+
+            <!-- EVENT INFORMATION -->
+
+            <section class="card">
+
+                <h2>Event Information</h2>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <div class="info-label">DATE</div>
+                        <div id="eventDate" class="info-value">-</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">TIME</div>
+                        <div id="eventTime" class="info-value">-</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">VENUE</div>
+                        <div id="eventVenue" class="info-value">-</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">CATEGORY</div>
+                        <div id="eventCategoryInfo" class="info-value">-</div>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CHIEF GUEST -->
+
+            <section class="card" style="margin-top: 25px;">
+
+                <h2>Chief Guest</h2>
+
+                <div class="guest">
+
+                    <img
+                            id="guestImage"
+                            class="guest-image"
+                            src=""
+                            alt="Chief Guest"
+                    >
+
+                    <div>
+
+                        <div id="guestName" class="guest-name">
+                            -
+                        </div>
+
+                        <div id="guestRole" class="guest-role">
+                            -
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <section class="card booking-card">
+
+            <h2>Book Your Ticket</h2>
+
+            <div class="price-label">
+                Ticket Price
+            </div>
+
+            <div id="ticketPrice" class="price">
+                ₹0
+            </div>
+
+            <div class="seat-row">
+
+                <span>Tickets Booked</span>
+
+                <span id="ticketsBooked">
+                0
+            </span>
+
+            </div>
+
+            <div class="seat-row">
+
+                <span>Available Seats</span>
+
+                <span id="availableSeats" class="seat-count">
+                0
+            </span>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                        id="progressBar"
+                        class="progress-bar">
+                </div>
+
+            </div>
+
+            <div id="capacityInfo" class="capacity-info">
+                Capacity: 0
+            </div>
+
+            <button
+                    id="bookButton"
+                    class="book-button"
+                    onclick="bookTicket()">
+
+                Book Ticket
+
+            </button>
+
+        </section>
+
+    </div>
+
+    <div id="errorMessage"></div>
+    ```
+
+</main>
+
+<script>
+
+    /* ================= GET EVENT ID ================= */
+
+    const params = new URLSearchParams(window.location.search);
+
+    const eventId = params.get("id");
+
+
+    /* ================= LOAD EVENT ================= */
+
+    if (!eventId) {
+
+        showError("Event ID not found.");
+
+    } else {
+
+        loadEvent();
+
+    }
+
+
+    function loadEvent() {
+
+        fetch("/api/events/" + eventId)
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Event not found");
+                }
+
+                return response.json();
+
+            })
+
+            .then(event => {
+
+                displayEvent(event);
+
+            })
+
+            .catch(error => {
+
+                console.error(error);
+
+                showError("Unable to load event details.");
+
+            });
+
+    }
+
+
+    /* ================= DISPLAY EVENT ================= */
+
+    function displayEvent(event) {
+
+        const availableSeats =
+            event.capacity - event.ticketsIssued;
+
+        const bookingPercentage =
+            event.capacity > 0
+                ? (event.ticketsIssued / event.capacity) * 100
+                : 0;
+
+
+        /* HERO */
+
+        document.getElementById("eventName").textContent =
+            event.name || "Event";
+
+        document.getElementById("eventCategory").textContent =
+            event.category || "Event";
+
+        document.getElementById("eventDescription").textContent =
+            event.description || "No description available.";
+
+
+        /* EVENT IMAGE */
+
+        const eventImage =
+            document.getElementById("eventImage");
+
+        if (event.imageUrl) {
+
+            eventImage.src = event.imageUrl;
+
+        } else {
+
+            eventImage.style.display = "none";
+
+        }
+
+
+        /* EVENT INFORMATION */
+
+        document.getElementById("eventDate").textContent =
+            event.eventDate || "-";
+
+        document.getElementById("eventTime").textContent =
+            (event.startTime || "-") +
+            " - " +
+            (event.endTime || "-");
+
+        document.getElementById("eventVenue").textContent =
+            event.venue || "-";
+
+        document.getElementById("eventCategoryInfo").textContent =
+            event.category || "-";
+
+
+        /* CHIEF GUEST */
+
+        document.getElementById("guestName").textContent =
+            event.chiefGuestName || "Chief Guest";
+
+        document.getElementById("guestRole").textContent =
+            event.chiefGuestRole || "Guest";
+
+
+        const guestImage =
+            document.getElementById("guestImage");
+
+        if (event.chiefGuestImage) {
+
+            guestImage.src =
+                event.chiefGuestImage;
+
+        } else {
+
+            guestImage.style.display = "none";
+
+        }
+
+
+        /* BOOKING */
+
+        document.getElementById("ticketPrice").textContent =
+            "₹" + (event.ticketPrice || 0);
+
+        document.getElementById("ticketsBooked").textContent =
+            event.ticketsIssued || 0;
+
+        document.getElementById("availableSeats").textContent =
+            availableSeats;
+
+        document.getElementById("capacityInfo").textContent =
+            "Capacity: " + event.capacity;
+
+
+        /* PROGRESS BAR */
+
+        document.getElementById("progressBar").style.width =
+            Math.min(bookingPercentage, 100) + "%";
+
+
+        /* FULL EVENT */
+
+        const bookButton =
+            document.getElementById("bookButton");
+
+        if (availableSeats <= 0) {
+
+            bookButton.disabled = true;
+
+            bookButton.textContent =
+                "Event Full";
+
+        }
+
+    }
+
+
+    /* ================= BOOK TICKET ================= */
+
+    function bookTicket() {
+
+        window.location.href =
+            "/book?eventId=" + eventId;
+
+    }
+
+
+    /* ================= ERROR ================= */
+
+    function showError(message) {
+
+        document.getElementById("eventName").textContent =
+            "Event Details";
+
+        document.getElementById("errorMessage").innerHTML =
+            `<div class="error">${message}</div>`;
+
+    }
+
+</script>
+
+</body>
+</html>
