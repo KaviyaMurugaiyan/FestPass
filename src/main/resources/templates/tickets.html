@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Tickets - FestPass</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #1f2937;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #16803c;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #d9f99d;
+        }
+
+        .nav a {
+            display: block;
+            text-decoration: none;
+            color: white;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255,255,255,0.18);
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 18px;
+            right: 18px;
+        }
+
+        .logout a {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            color: #14532d;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .ticket {
+            max-width: 850px;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+        }
+
+        .ticket-header {
+            background: #16803c;
+            color: white;
+            padding: 22px 28px;
+        }
+
+        .ticket-header h2 {
+            margin-bottom: 5px;
+        }
+
+        .ticket-header p {
+            opacity: 0.9;
+        }
+
+        .ticket-body {
+            padding: 30px;
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .details {
+            flex: 1;
+        }
+
+        .detail {
+            margin-bottom: 18px;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #14532d;
+        }
+
+        .qr-section {
+            text-align: center;
+            min-width: 230px;
+        }
+
+        .qr-section img {
+            width: 200px;
+            height: 200px;
+            border: 8px solid white;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+        }
+
+        .qr-section p {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .used {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty {
+            background: white;
+            padding: 45px;
+            border-radius: 15px;
+            text-align: center;
+            color: #6b7280;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .empty h2 {
+            color: #14532d;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 18px;
+            background: #16803c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                margin-left: 210px;
+                padding: 20px;
+            }
+
+            .ticket-body {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        Fest<span>Pass</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="/dashboard">Dashboard</a>
+
+        <a href="/events">Events</a>
+
+        <a href="/timings">Event Timings</a>
+
+        <a href="/bookings">My Bookings</a>
+
+        <a href="/tickets" class="active">My Tickets</a>
+
+        <a href="/scanner">QR Check-in</a>
+
+    </div>
+
+    <div class="logout">
+        <a href="/login" onclick="logout()">Logout</a>
+    </div>
+
+</div>
+
+
+<div class="main">
+
+    <div class="header">
+        <h1>My Tickets</h1>
+        <p>Your FestPass event ticket and QR code.</p>
+    </div>
+
+    <div id="ticketContainer">
+
+        <div class="empty">
+            Loading ticket...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const loggedInEmail =
+        localStorage.getItem("loggedInEmail");
+
+    if (!loggedInEmail) {
+        window.location.href = "/login";
+    }
+
+
+    async function loadTicket() {
+
+        const params =
+            new URLSearchParams(window.location.search);
+
+        const ticketId =
+            params.get("ticketId");
+
+        const container =
+            document.getElementById("ticketContainer");
+
+
+        if (!ticketId) {
+
+            container.innerHTML = `
+                <div class="empty">
+
+                    <h2>No Ticket Selected</h2>
+
+                    <p>
+                        Please book an event to view your ticket.
+                    </p>
+
+                    <a href="/events" class="back-btn">
+                        Browse Events
+                    </a>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch("/api/tickets/" + ticketId);
+
+
+            if (!response.ok) {
+                throw new Error("Ticket not found");
+            }
+
+
+            const ticket =
+                await response.json();
+
+
+            console.log("Ticket:", ticket);
+
+
+            const event =
+                ticket.event;
+
+            const attendee =
+                ticket.attendee;
+
+
+            const qrCode =
+                ticket.qrCode;
+
+
+            const statusClass =
+                ticket.used ? "status used" : "status";
+
+
+            const statusText =
+                ticket.used
+                    ? "ALREADY USED"
+                    : "VALID TICKET";
+
+
+            container.innerHTML = `
+
+                <div class="ticket">
+
+                    <div class="ticket-header">
+
+                        <h2>
+                            FestPass Event Ticket
+                        </h2>
+
+                        <p>
+                            College Fest 2026
+                        </p>
+
+                    </div>
+
+
+                    <div class="ticket-body">
+
+                        <div class="details">
+
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    EVENT
+                                </div>
+
+                                <div class="value">
+                                    ${event?.name || "Event"}
+                                </div>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    CATEGORY
+                                </div>
+
+                                <div class="value">
+                                    ${event?.category || "Fest Event"}
+                                </div>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    ATTENDEE
+                                </div>
+
+                                <div class="value">
+                                    ${attendee?.name || "Student"}
+                                </div>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    EMAIL
+                                </div>
+
+                                <div class="value">
+                                    ${attendee?.email || "-"}
+                                </div>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    VENUE
+                                </div>
+
+                                <div class="value">
+                                    ${event?.venue || "-"}
+                                </div>
+
+                            </div>
+
+
+                            <div class="detail">
+
+                                <div class="label">
+                                    TICKET ID
+                                </div>
+
+                                <div class="value">
+                                    #${ticket.id}
+                                </div>
+
+                            </div>
+
+
+                            <div class="${statusClass}">
+                                ${statusText}
+                            </div>
+
+                        </div>
+
+
+                        <div class="qr-section">
+
+                            <img
+                                src="/api/qr/${qrCode}"
+                                alt="Ticket QR Code"
+                            >
+
+                            <p>
+                                Show this QR code at the
+                                event entrance.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        } catch (error) {
+
+            console.error(error);
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    <h2>Unable to Load Ticket</h2>
+
+                    <p>
+                        The ticket could not be loaded.
+                    </p>
+
+                    <a href="/bookings" class="back-btn">
+                        My Bookings
+                    </a>
+
+                </div>
+
+            `;
+        }
+    }
+
+
+    function logout() {
+
+        localStorage.removeItem("loggedInEmail");
+
+    }
+
+
+    loadTicket();
+
+</script>
+
+</body>
+</html>

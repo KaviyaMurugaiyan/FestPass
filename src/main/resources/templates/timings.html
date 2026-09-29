@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Event Timings - FestPass</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #1f2937;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #16803c;
+            color: white;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #d9f99d;
+        }
+
+        .nav a {
+            display: block;
+            text-decoration: none;
+            color: white;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border-radius: 9px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 18px;
+            right: 18px;
+        }
+
+        .logout a {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            padding: 35px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            color: #14532d;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        /* TIMELINE */
+        .timeline {
+            max-width: 950px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+            border-left: 5px solid #16803c;
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .time-box {
+            min-width: 130px;
+            text-align: center;
+            background: #ecfdf3;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .time-box .date {
+            font-size: 14px;
+            color: #15803d;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .time-box .time {
+            font-size: 18px;
+            font-weight: bold;
+            color: #14532d;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-info h2 {
+            font-size: 21px;
+            color: #14532d;
+            margin-bottom: 8px;
+        }
+
+        .event-info p {
+            color: #6b7280;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .category {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .empty {
+            background: white;
+            padding: 40px;
+            border-radius: 14px;
+            text-align: center;
+            color: #6b7280;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                margin-left: 210px;
+                padding: 20px;
+            }
+
+            .event-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .time-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="logo">
+        Fest<span>Pass</span>
+    </div>
+
+    <div class="nav">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/events">
+            Events
+        </a>
+
+        <a href="/timings" class="active">
+            Event Timings
+        </a>
+
+        <a href="/bookings">
+            My Bookings
+        </a>
+
+        <a href="/tickets">
+            My Tickets
+        </a>
+
+        <a href="/scanner">
+            QR Check-in
+        </a>
+
+    </div>
+
+    <div class="logout">
+        <a href="/login" onclick="logout()">
+            Logout
+        </a>
+    </div>
+
+</div>
+
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+    <div class="header">
+        <h1>Event Timings</h1>
+        <p>Check the schedule and timing of all upcoming fest events.</p>
+    </div>
+
+    <div class="timeline" id="timeline">
+
+        <div class="empty">
+            Loading event timings...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Check login
+    const loggedInEmail = localStorage.getItem("loggedInEmail");
+
+    if (!loggedInEmail) {
+        window.location.href = "/login";
+    }
+
+
+    // Load events
+    async function loadTimings() {
+
+        try {
+
+            const response = await fetch("/api/events");
+
+            if (!response.ok) {
+                throw new Error("Unable to fetch events");
+            }
+
+            const events = await response.json();
+
+            const timeline = document.getElementById("timeline");
+
+            timeline.innerHTML = "";
+
+            if (!events || events.length === 0) {
+
+                timeline.innerHTML = `
+                    <div class="empty">
+                        No events available.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            events.forEach(event => {
+
+                const eventDate = event.eventDate
+                    ? new Date(event.eventDate + "T00:00:00")
+                    : null;
+
+                const formattedDate = eventDate
+                    ? eventDate.toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    })
+                    : "Date not available";
+
+
+                const startTime = event.startTime
+                    ? formatTime(event.startTime)
+                    : "--";
+
+                const endTime = event.endTime
+                    ? formatTime(event.endTime)
+                    : "--";
+
+
+                const card = document.createElement("div");
+
+                card.className = "event-card";
+
+                card.innerHTML = `
+
+                    <div class="time-box">
+
+                        <div class="date">
+                            ${formattedDate}
+                        </div>
+
+                        <div class="time">
+                            ${startTime}
+                        </div>
+
+                        <div style="margin-top:5px;color:#6b7280;font-size:12px;">
+                            to ${endTime}
+                        </div>
+
+                    </div>
+
+
+                    <div class="event-info">
+
+                        <span class="category">
+                            ${event.category || "Fest Event"}
+                        </span>
+
+                        <h2>
+                            ${event.name || "Untitled Event"}
+                        </h2>
+
+                        <p>
+                            📍 ${event.venue || "Venue not available"}
+                        </p>
+
+                        <p>
+                            🎤 ${event.chiefGuestName || "Chief guest details unavailable"}
+                        </p>
+
+                    </div>
+
+                `;
+
+                timeline.appendChild(card);
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById("timeline").innerHTML = `
+                <div class="empty">
+                    Unable to load event timings.
+                    <br><br>
+                    Please make sure the Spring Boot server is running.
+                </div>
+            `;
+        }
+    }
+
+
+    // Convert 24-hour time to 12-hour format
+    function formatTime(time) {
+
+        if (!time) {
+            return "--";
+        }
+
+        const parts = time.split(":");
+
+        let hours = parseInt(parts[0]);
+        const minutes = parts[1];
+
+        const ampm = hours >= 12 ? "PM" : "AM";
+
+        hours = hours % 12;
+
+        if (hours === 0) {
+            hours = 12;
+        }
+
+        return `${hours}:${minutes} ${ampm}`;
+    }
+
+
+    // Logout
+    function logout() {
+        localStorage.removeItem("loggedInEmail");
+    }
+
+
+    loadTimings();
+
+</script>
+
+</body>
+</html>
